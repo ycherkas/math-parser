@@ -12,9 +12,9 @@ namespace MathParser
         private double _number;
         private string? _identifier;
 
-        public Tokenizer(TextReader reader)
+        public Tokenizer(string input)
         {
-            _reader = reader;
+            _reader = new StringReader(input);
             NextChar();
             NextToken();
         }
