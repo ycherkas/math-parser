@@ -7,7 +7,7 @@ namespace MathParser.Tests
         [Fact]
         public void SerializationTest()
         {
-            var test = "1+1";
+            var test = "a + a + a";
             var rootTreeNode = Parser.Parse(test);
 
             Assert.Equal(rootTreeNode.ToString(), test);
@@ -25,15 +25,13 @@ namespace MathParser.Tests
         [Fact]
         public void AddTest()
         {
-            var context = new SimpleContext();
-            Assert.Equal(2, Parser.Parse("1 + 1").Eval(context));
+            Assert.Equal(2, Parser.Parse("1 + 1").Eval(null));
         }
 
         [Fact]
         public void SubstractTest()
         {
-            var context = new SimpleContext();
-            Assert.Equal(1, Parser.Parse("2 - 1").Eval(context));
+            Assert.Equal(1, Parser.Parse("2 - 1").Eval(null));
         }
 
         [Fact]
