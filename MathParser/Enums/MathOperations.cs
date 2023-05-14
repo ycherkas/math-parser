@@ -2,7 +2,7 @@
 
 namespace MathParser.Enums
 {
-    public enum OperationBinary
+    public enum MathOperations
     {
         [StringValue("")]
         Undefined,
@@ -15,6 +15,8 @@ namespace MathParser.Enums
         [StringValue("/")]
         Divide,
         [StringValue("^")]
-        Power
+        Power,
+        [StringValue("-")]
+        Minus
     }
 }

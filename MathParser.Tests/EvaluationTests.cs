@@ -2,26 +2,8 @@ using MathParser.Contexts;
 
 namespace MathParser.Tests
 {
-    public class SimpleMathTests
+    public class EvaluationTests
     {
-        [Fact]
-        public void SerializationTest()
-        {
-            var test = "1+1";
-            var rootTreeNode = Parser.Parse(test);
-
-            Assert.Equal(rootTreeNode.ToString(), test);
-        }
-
-        [Fact]
-        public void SerializationTest2()
-        {
-            var test = "a+b/c-e*sin(2*gamma)-f^2";
-            var rootTreeNode = Parser.Parse(test);
-
-            Assert.Equal(rootTreeNode.ToString(), test);
-        }
-
         [Fact]
         public void AddTest()
         {

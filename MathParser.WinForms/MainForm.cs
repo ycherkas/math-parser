@@ -22,26 +22,51 @@ namespace MathParser.WinForms
 
         private void btnCalculate_Click(object sender, EventArgs e)
         {
-            var variables = new Dictionary<string, double>();
-
-            foreach (var item in txtVariables.Text.Split(','))
+            try
             {
-                if (string.IsNullOrEmpty(item)) continue;
+                var variables = new Dictionary<string, double>();
 
-                if (!item.Contains('=')) continue;
+                foreach (var item in txtVariables.Text.Split(','))
+                {
+                    if (string.IsNullOrEmpty(item)) continue;
 
-                var key = item.Split('=')[0];
-                var value = double.Parse(item.Split("=")[1]);
+                    if (!item.Contains('=')) continue;
 
-                variables.Add(key, value);
+                    var key = item.Split('=')[0];
+                    var value = double.Parse(item.Split("=")[1]);
+
+                    variables.Add(key, value);
+                }
+
+                var expression = Parser.Parse(txtFormula.Text);
+                lblParsed.Text = expression.ToString();
+
+                var context = new SimpleContext(variables);
+                var calculated = expression.Eval(context);
+                lblCalculated.Text = calculated.ToString();
+            }
+            catch(Exception ex)
+            {
+                lblCalculated.Text = ex.Message;
             }
 
-            var expression = Parser.Parse(txtFormula.Text);
-            lblParsed.Text = expression.ToString();
+        }
 
-            var context = new SimpleContext(variables);
-            var calculated = expression.Eval(context);
-            lblCalculated.Text = calculated.ToString();
+        private void btnSimplify_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var expression = Parser.Parse(txtFormula.Text);
+                lblParsed.Text = expression.ToString();
+
+                var simplified = Simplifier.Simplify(expression);
+                lblSimplified.Text = simplified.ToString();
+            }
+            catch(Exception ex)
+            {
+                lblSimplified.Text = ex.Message;
+            }
+
         }
     }
 }

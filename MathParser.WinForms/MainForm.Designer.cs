@@ -38,6 +38,9 @@
             label1 = new Label();
             lblCalculated = new Label();
             btnCalculate = new Button();
+            btnSimplify = new Button();
+            lblSimplifiedResult = new Label();
+            lblSimplified = new Label();
             SuspendLayout();
             // 
             // txtFormula
@@ -49,7 +52,7 @@
             // 
             // btnParse
             // 
-            btnParse.Location = new Point(12, 158);
+            btnParse.Location = new Point(12, 211);
             btnParse.Name = "btnParse";
             btnParse.Size = new Size(527, 29);
             btnParse.TabIndex = 1;
@@ -120,7 +123,7 @@
             // 
             // btnCalculate
             // 
-            btnCalculate.Location = new Point(12, 193);
+            btnCalculate.Location = new Point(12, 246);
             btnCalculate.Name = "btnCalculate";
             btnCalculate.Size = new Size(527, 29);
             btnCalculate.TabIndex = 9;
@@ -128,11 +131,42 @@
             btnCalculate.UseVisualStyleBackColor = true;
             btnCalculate.Click += btnCalculate_Click;
             // 
+            // btnSimplify
+            // 
+            btnSimplify.Location = new Point(12, 281);
+            btnSimplify.Name = "btnSimplify";
+            btnSimplify.Size = new Size(527, 29);
+            btnSimplify.TabIndex = 10;
+            btnSimplify.Text = "Simplify";
+            btnSimplify.UseVisualStyleBackColor = true;
+            btnSimplify.Click += btnSimplify_Click;
+            // 
+            // lblSimplifiedResult
+            // 
+            lblSimplifiedResult.AutoSize = true;
+            lblSimplifiedResult.Location = new Point(12, 159);
+            lblSimplifiedResult.Name = "lblSimplifiedResult";
+            lblSimplifiedResult.Size = new Size(124, 20);
+            lblSimplifiedResult.TabIndex = 11;
+            lblSimplifiedResult.Text = "Simplified Result:";
+            // 
+            // lblSimplified
+            // 
+            lblSimplified.AutoSize = true;
+            lblSimplified.Location = new Point(158, 159);
+            lblSimplified.Name = "lblSimplified";
+            lblSimplified.Size = new Size(18, 20);
+            lblSimplified.TabIndex = 12;
+            lblSimplified.Text = "...";
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(551, 229);
+            ClientSize = new Size(551, 322);
+            Controls.Add(lblSimplified);
+            Controls.Add(lblSimplifiedResult);
+            Controls.Add(btnSimplify);
             Controls.Add(btnCalculate);
             Controls.Add(lblCalculated);
             Controls.Add(label1);
@@ -162,5 +196,8 @@
         private Label label1;
         private Label lblCalculated;
         private Button btnCalculate;
+        private Button btnSimplify;
+        private Label lblSimplifiedResult;
+        private Label lblSimplified;
     }
 }

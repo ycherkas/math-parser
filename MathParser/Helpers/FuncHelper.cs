@@ -4,19 +4,19 @@ namespace MathParser.Helpers
 {
     public static class FuncHelper
     {
-        public static Func<double, double, double> GetBinary(OperationBinary operation)
+        public static Func<double, double, double> GetBinary(MathOperations operation)
         {
             switch (operation)
             {
-                case OperationBinary.Add:
+                case MathOperations.Add:
                     return (a, b) => a + b;
-                case OperationBinary.Subtract:
+                case MathOperations.Subtract:
                     return (a, b) => a - b;
-                case OperationBinary.Multiply:
+                case MathOperations.Multiply:
                     return (a, b) => a * b;
-                case OperationBinary.Divide:
+                case MathOperations.Divide:
                     return (a, b) => a / b;
-                case OperationBinary.Power:
+                case MathOperations.Power:
                     return (a, b) => Math.Pow(a, b);
 
                 default:
@@ -24,11 +24,11 @@ namespace MathParser.Helpers
             }
         }
 
-        public static Func<double, double> GetUnary(OperationUnary operation)
+        public static Func<double, double> GetUnary(MathOperations operation)
         {
             switch (operation)
             {
-                case OperationUnary.Minus:
+                case MathOperations.Minus:
                     return (a) => -a;
 
                 default:

@@ -29,18 +29,18 @@ namespace MathParser
 
             while (true)
             {
-                var operation = OperationBinary.Undefined;
+                var operation = MathOperations.Undefined;
 
                 if (_tokenizer.Token == Token.Add)
                 {
-                    operation = OperationBinary.Add;
+                    operation = MathOperations.Add;
                 }
                 else if (_tokenizer.Token == Token.Subtract)
                 {
-                    operation = OperationBinary.Subtract;
+                    operation = MathOperations.Subtract;
                 }
 
-                if (operation == OperationBinary.Undefined)
+                if (operation == MathOperations.Undefined)
                     return leftNode;
 
                 // Skip the operator
@@ -49,8 +49,15 @@ namespace MathParser
                 // Parse the right hand side of the expression
                 var rightNode = ParseMultiplyDivide();
 
-                // Create a binary node and use it as the left-hand side from now on
-                leftNode = new NodeBinary(leftNode, rightNode, operation);
+                if(operation == MathOperations.Subtract)
+                {
+                    var minusRightNode = new NodeFunction(MathOperations.Minus, rightNode);
+                    leftNode = new NodeFunction(leftNode, minusRightNode, MathOperations.Add);
+                } else
+                {
+                    // Create a binary node and use it as the left-hand side from now on
+                    leftNode = new NodeFunction(leftNode, rightNode, operation);
+                }
             }
         }
 
@@ -62,17 +69,17 @@ namespace MathParser
 
             while (true)
             {
-                var operation = OperationBinary.Undefined;
+                var operation = MathOperations.Undefined;
                 if (_tokenizer.Token == Token.Multiply)
                 {
-                    operation = OperationBinary.Multiply;
+                    operation = MathOperations.Multiply;
                 }
                 else if (_tokenizer.Token == Token.Divide)
                 {
-                    operation = OperationBinary.Divide;
+                    operation = MathOperations.Divide;
                 }
 
-                if (operation == OperationBinary.Undefined)
+                if (operation == MathOperations.Undefined)
                     return leftNode;
 
                 // Skip the operator
@@ -82,7 +89,7 @@ namespace MathParser
                 var rightNode = ParsePower();
 
                 // Create a binary node and use it as the left-hand side from now on
-                leftNode = new NodeBinary(leftNode, rightNode, operation);
+                leftNode = new NodeFunction(leftNode, rightNode, operation);
             }
         }
 
@@ -94,13 +101,13 @@ namespace MathParser
 
             while (true)
             {
-                var operation = OperationBinary.Undefined;
+                var operation = MathOperations.Undefined;
                 if (_tokenizer.Token == Token.Power)
                 {
-                    operation = OperationBinary.Power;
+                    operation = MathOperations.Power;
                 }
 
-                if (operation == OperationBinary.Undefined)
+                if (operation == MathOperations.Undefined)
                     return leftNode;
 
                 // Skip the operator
@@ -110,7 +117,7 @@ namespace MathParser
                 var rightNode = ParseUnary();
 
                 // Create a binary node and use it as the left-hand side from now on
-                leftNode = new NodeBinary(leftNode, rightNode, operation);
+                leftNode = new NodeFunction(leftNode, rightNode, operation);
             }
         }
 
@@ -133,7 +140,7 @@ namespace MathParser
                     var node = ParseUnary();
 
                     // Create unary node
-                    return new NodeUnary(node, OperationUnary.Minus);
+                    return new NodeFunction(MathOperations.Minus, node);
                 }
 
                 return ParseLeaf();

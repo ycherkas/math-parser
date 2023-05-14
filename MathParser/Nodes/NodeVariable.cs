@@ -12,6 +12,8 @@ namespace MathParser.Nodes
             _variableName = variableName;
         }
 
+        public override bool IsTerminal => false;
+
         public override double Eval(IContext ctx)
         {
             return ctx.ResolveVariable(_variableName);
