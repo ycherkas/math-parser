@@ -1,4 +1,5 @@
 ﻿using MathParser.Context;
+using System.Xml.Linq;
 
 namespace MathParser.Nodes
 {
@@ -13,6 +14,28 @@ namespace MathParser.Nodes
         }
 
         public override bool IsTerminal => false;
+
+        public string Name => _variableName;
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+
+            if (obj is string)
+            {
+                if ((string)obj == Name)
+                    return true;
+                else
+                    return false;
+            }
+
+            var v = obj as NodeVariable;
+            if (v != null)
+                return v.Name == Name;
+            else
+                return false;
+        }
 
         public override double Eval(IContext ctx)
         {

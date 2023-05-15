@@ -29,7 +29,15 @@ namespace MathParser.Nodes
 
                 bool allChildrenAreEqual = true;
                 for (int i = 0; i < funcNode.Children.Count; i++)
-                    if (!Children[i].Equals(funcNode.Children[i]))
+                    if (Children[i] is NodeVariable && funcNode.Children[i] is NodeVariable)
+                    {
+                        if (!((NodeVariable)Children[i]).Equals((NodeVariable)funcNode.Children[i]))
+                        {
+                            allChildrenAreEqual = false;
+                            break;
+                        }
+                    }
+                    else if (!Children[i].Equals(funcNode.Children[i]))
                     {
                         allChildrenAreEqual = false;
                         break;
