@@ -7,20 +7,21 @@ namespace MathParser.Nodes
     // NodeUnary for unary operations such as Negate
     public class NodeUnary : Node
     {
-        private Node _node;
-        private OperationUnary _operation;
-
-        public NodeUnary(Node node, OperationUnary operation)
+        public NodeUnary(Node node, MathOperations operation)
         {
-            _node = node;
-            _operation = operation;
+            Children.Add(node);
+            Operation = operation;
         }
+
+        public override bool IsTerminal => false;
+
+        private Node _node => Children[0];
 
         public override double Eval(IContext context)
         {
             var rhsVal = _node.Eval(context);
 
-            var function = FuncHelper.GetUnary(_operation);
+            var function = FuncHelper.GetUnary(Operation);
 
             var result = function(rhsVal);
 
@@ -29,7 +30,7 @@ namespace MathParser.Nodes
 
         public override string ToString()
         {
-            return $"{_operation.Value()}{_node.ToString()}";
+            return $"{Operation.Value()}{_node.ToString()}";
         }
     }
 }

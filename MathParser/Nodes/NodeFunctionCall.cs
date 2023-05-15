@@ -13,6 +13,8 @@ namespace MathParser.Nodes
             _arguments = arguments;
         }
 
+        public override bool IsTerminal => false;
+
         public override double Eval(IContext context)
         {
             var argVals = new double[_arguments.Length];
