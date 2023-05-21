@@ -15,11 +15,9 @@ namespace MathParser
 
         public static NodeBase Simplify(NodeBase node)
         {
-            var nodeFunction = node as NodeFunction;
+            if (node is not NodeFunction && node is not NodeFunctionCall) return node;
 
-            if (nodeFunction is null) return node;
-
-            foreach (NodeBase child in nodeFunction.Children)
+            foreach (NodeBase child in node.Children)
             {
                 Simplify(child);
             }
@@ -27,12 +25,12 @@ namespace MathParser
             switch (node.Operation)
             {
                 case MathOperations.Add:
-                    nodeFunction = nodeFunction.ToMultichildTree();
-                    ReduceSummands(nodeFunction);
+                    node = node.ToMultichildTree();
+                    ReduceSummands(node);
                     break;
                 case MathOperations.Multiply:
-                    nodeFunction = nodeFunction.ToMultichildTree();
-                    nodeFunction = ReduceMultipleZero(nodeFunction);
+                    node = node.ToMultichildTree();
+                    node = ReduceMultipleZero(node);
                     if (node.Children.Count == 1)
                     {
                         node = node.Children[0];
@@ -40,7 +38,7 @@ namespace MathParser
                     break;
             }
 
-            return nodeFunction;
+            return node;
         }
 
         private static void ReduceSummands(NodeBase node)
@@ -125,6 +123,20 @@ namespace MathParser
                 if (childNumberNode != null && childNumberNode.Number == 0)
                 {
                     return new NodeFunction();
+                }
+            }
+
+            return node;
+        }
+
+        private static NodeBase ReduceMultipleZero(NodeBase node)
+        {
+            foreach (var child in node.Children)
+            {
+                var childNumberNode = child as NodeNumber;
+                if (childNumberNode != null && childNumberNode.Number == 0)
+                {
+                    return new NodeNumber(0);
                 }
             }
 

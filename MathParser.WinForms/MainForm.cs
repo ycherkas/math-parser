@@ -2,6 +2,7 @@ using MathParser.Contexts;
 using MathParser.Nodes;
 using Microsoft.Msagl.Drawing;
 using MathParser.Helpers;
+using Microsoft.Msagl.GraphViewerGdi;
 
 namespace MathParser.WinForms
 {
@@ -124,6 +125,7 @@ namespace MathParser.WinForms
 
             var rootNode = graph.AddNode(Guid.NewGuid().ToString());
             rootNode.LabelText = node.StringValue;
+
             AddEdge(graph, rootNode, node);
 
             gViewer.Graph = graph;

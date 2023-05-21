@@ -10,7 +10,7 @@ namespace MathParser.Nodes
         public NodeFunctionCall(string functionName, NodeBase[] arguments)
         {
             _functionName = functionName;
-            _arguments = arguments;
+            Children.AddRange(arguments);
         }
 
         public override string StringValue => _functionName;
@@ -32,7 +32,7 @@ namespace MathParser.Nodes
 
         public override string ToString()
         {
-            return $"{_functionName}({string.Join(',', _arguments.Select(a=>a.ToString()))})";
+            return $"{_functionName}({string.Join(',', Children.Select(a=>a.ToString()))})";
         }
     }
 }
