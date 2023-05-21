@@ -5,17 +5,19 @@ using MathParser.Helpers;
 namespace MathParser.Nodes
 {
     // NodeUnary for unary operations such as Negate
-    public class NodeUnary : Node
+    public class NodeUnary : NodeBase
     {
-        public NodeUnary(Node node, MathOperations operation)
+        public NodeUnary(NodeBase node, MathOperations operation)
         {
             Children.Add(node);
             Operation = operation;
         }
 
+        public override string StringValue => Operation.Value() ?? "???";
+
         public override bool IsTerminal => false;
 
-        private Node _node => Children[0];
+        private NodeBase _node => Children[0];
 
         public override double Eval(IContext context)
         {

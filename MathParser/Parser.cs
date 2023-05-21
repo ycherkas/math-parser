@@ -4,7 +4,7 @@ namespace MathParser
 {
     public class Parser
     {
-        public static Node Parse(string input)
+        public static NodeBase Parse(string input)
         {
             var tokenizer = new Tokenizer(input);
             var parser = new ParserProcessor(tokenizer);

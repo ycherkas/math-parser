@@ -1,10 +1,9 @@
 ﻿using MathParser.Context;
-using System.Xml.Linq;
 
 namespace MathParser.Nodes
 {
     // Represents a variable (or a constant) in an expression.  eg: "2 * pi"
-    public class NodeVariable : Node
+    public class NodeVariable : NodeBase
     {
         string _variableName;
 
@@ -12,6 +11,8 @@ namespace MathParser.Nodes
         {
             _variableName = variableName;
         }
+
+        public override string StringValue => Name;
 
         public override bool IsTerminal => false;
 

@@ -3,13 +3,15 @@ using MathParser.Enums;
 
 namespace MathParser.Nodes
 {
-    public abstract class Node
+    public abstract class NodeBase
     {
-        internal List<Node> Children = new List<Node>();
+        public List<NodeBase> Children = new List<NodeBase>();
 
         internal MathOperations Operation;
 
         public abstract bool IsTerminal { get; }
+
+        public abstract string StringValue { get; }
 
         public bool IsNumber => this is NodeNumber;
 
@@ -20,7 +22,7 @@ namespace MathParser.Nodes
             if (obj == null)
                 return false;
 
-            var funcNode = obj as Node;
+            var funcNode = obj as NodeBase;
 
             if (funcNode != null)
             {

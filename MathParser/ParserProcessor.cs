@@ -12,7 +12,7 @@ namespace MathParser
             _tokenizer = tokenizer;
         }
 
-        public Node ParseExpression()
+        public NodeBase ParseExpression()
         {
             var expression = ParseAddSubtract();
 
@@ -23,7 +23,7 @@ namespace MathParser
         }
 
         // Parse an sequence of add/subtract operators
-        private Node ParseAddSubtract()
+        private NodeBase ParseAddSubtract()
         {
             var leftNode = ParseMultiplyDivide();
 
@@ -52,17 +52,17 @@ namespace MathParser
                 if(operation == MathOperations.Subtract)
                 {
                     var minusRightNode = new NodeFunction(MathOperations.Minus, rightNode);
-                    leftNode = new NodeFunction(leftNode, minusRightNode, MathOperations.Add);
+                    leftNode = new NodeFunction(MathOperations.Add, leftNode, minusRightNode);
                 } else
                 {
                     // Create a binary node and use it as the left-hand side from now on
-                    leftNode = new NodeFunction(leftNode, rightNode, operation);
+                    leftNode = new NodeFunction(operation, leftNode, rightNode);
                 }
             }
         }
 
         // Parse an sequence of add/subtract operators
-        private Node ParseMultiplyDivide()
+        private NodeBase ParseMultiplyDivide()
         {
             // Parse the left hand side
             var leftNode = ParsePower();
@@ -89,12 +89,12 @@ namespace MathParser
                 var rightNode = ParsePower();
 
                 // Create a binary node and use it as the left-hand side from now on
-                leftNode = new NodeFunction(leftNode, rightNode, operation);
+                leftNode = new NodeFunction(operation, leftNode, rightNode);
             }
         }
 
         // Parse an sequence of power operators
-        private Node ParsePower()
+        private NodeBase ParsePower()
         {
             // Parse the left hand side
             var leftNode = ParseUnary();
@@ -117,12 +117,12 @@ namespace MathParser
                 var rightNode = ParseUnary();
 
                 // Create a binary node and use it as the left-hand side from now on
-                leftNode = new NodeFunction(leftNode, rightNode, operation);
+                leftNode = new NodeFunction(operation, leftNode, rightNode);
             }
         }
 
         // Parse a unary operator (eg: negative/positive)
-        private Node ParseUnary()
+        private NodeBase ParseUnary()
         {
             while (true)
             {
@@ -147,7 +147,7 @@ namespace MathParser
             }
         }
 
-        private Node ParseLeaf()
+        private NodeBase ParseLeaf()
         {
             if (_tokenizer.Token == Token.Number)
             {
@@ -196,7 +196,7 @@ namespace MathParser
                     _tokenizer.NextToken();
 
                     // Parse arguments
-                    var arguments = new List<Node>();
+                    var arguments = new List<NodeBase>();
                     while (true)
                     {
                         // Parse argument and add to list
