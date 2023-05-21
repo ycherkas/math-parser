@@ -2,16 +2,18 @@
 
 namespace MathParser.Nodes
 {
-    public class NodeFunctionCall : Node
+    public class NodeFunctionCall : NodeBase
     {
         private string _functionName;
-        private Node[] _arguments;
+        private NodeBase[] _arguments;
 
-        public NodeFunctionCall(string functionName, Node[] arguments)
+        public NodeFunctionCall(string functionName, NodeBase[] arguments)
         {
             _functionName = functionName;
             _arguments = arguments;
         }
+
+        public override string StringValue => _functionName;
 
         public override bool IsTerminal => false;
 

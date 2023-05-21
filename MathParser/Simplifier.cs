@@ -1,20 +1,25 @@
 ﻿using MathParser.Enums;
+using MathParser.Helpers;
 using MathParser.Nodes;
 
 namespace MathParser
 {
     public class Simplifier
     {
-        public static Node Simplify(string input)
+        public static NodeBase Simplify(string input)
         {
             var node = Parser.Parse(input);
 
             return Simplify(node);
         }
 
-        public static Node Simplify(Node node)
+        public static NodeBase Simplify(NodeBase node)
         {
-            foreach (Node child in node.Children)
+            var nodeFunction = node as NodeFunction;
+
+            if (nodeFunction is null) return node;
+
+            foreach (NodeBase child in nodeFunction.Children)
             {
                 Simplify(child);
             }
@@ -22,56 +27,23 @@ namespace MathParser
             switch (node.Operation)
             {
                 case MathOperations.Add:
-                    BuildMultichildTree(node);
-                    ReduceSummands(node);
+                    nodeFunction = nodeFunction.ToMultichildTree();
+                    ReduceSummands(nodeFunction);
                     break;
                 case MathOperations.Multiply:
-                    node = ReduceMultipleZero(node);
-                    if(node.Children.Count == 1)
+                    nodeFunction = nodeFunction.ToMultichildTree();
+                    nodeFunction = ReduceMultipleZero(nodeFunction);
+                    if (node.Children.Count == 1)
                     {
                         node = node.Children[0];
                     }
                     break;
             }
 
-            return node;
+            return nodeFunction;
         }
 
-        private static void BuildMultichildTree(Node beginNode)
-        {
-            var newChildren = new List<Node>();
-            BuildMultichildTree(beginNode, beginNode, newChildren, false);
-            beginNode.Children = newChildren;
-        }
-
-        private static void BuildMultichildTree(Node beginNode, Node node, List<Node> newChildren, bool neg)
-        {
-            foreach (var child in node.Children)
-            {
-                if (child.Operation == beginNode.Operation)
-                {
-                    BuildMultichildTree(beginNode, child, newChildren, neg);
-                    continue;
-                }
-                else if (child.Operation == MathOperations.Minus)
-                {
-                    BuildMultichildTree(beginNode, child, newChildren, !neg);
-                    continue;
-                }
-
-                if (neg && (beginNode.Operation == MathOperations.Add))
-                {
-                    if (child is NodeNumber nodeNumber)
-                        newChildren.Add(new NodeNumber(-nodeNumber.Number));
-                    else
-                        newChildren.Add(new NodeFunction(MathOperations.Minus, child));
-                }
-                else
-                    newChildren.Add(child);
-            }
-        }
-
-        private static void ReduceSummands(Node node)
+        private static void ReduceSummands(NodeBase node)
         {
             int i = 0;
             while (i < node.Children.Count)
@@ -92,14 +64,14 @@ namespace MathParser
             }
         }
 
-        private static Node ReduceAddition(Node node1, Node node2)
+        private static NodeBase ReduceAddition(NodeBase node1, NodeBase node2)
         {
             var node1neg = node1.Operation == MathOperations.Minus;
             var node2neg = node2.Operation == MathOperations.Minus;
             var node11 = node1neg ? node1.Children[0] : node1;
             var node21 = node2neg ? node2.Children[0] : node2;
 
-            Node valueNode1 = null;
+            NodeBase valueNode1 = null;
             if (node11.Operation == MathOperations.Multiply)
                 valueNode1 = node11.Children.Where(child => child.IsNumber).FirstOrDefault();
             if (valueNode1 == null)
@@ -108,7 +80,7 @@ namespace MathParser
             if (node1neg)
                 value1 *= -1;
 
-            Node valueNode2 = null;
+            NodeBase valueNode2 = null;
             if (node21.Operation == MathOperations.Multiply)
                 valueNode2 = node21.Children.Where(child => child.IsNumber).FirstOrDefault();
             if (valueNode2 == null)
@@ -120,13 +92,13 @@ namespace MathParser
             var notValueNodes1 = node11.Operation == MathOperations.Multiply ?
                 node11.Children.Where(child => !child.IsNumber).ToList() :
                 node11.IsNumber ?
-                new List<Node>() { } :
-                new List<Node>() { node11 };
+                new List<NodeBase>() { } :
+                new List<NodeBase>() { node11 };
             var notValueNodes2 = node21.Operation == MathOperations.Multiply ?
                 node21.Children.Where(child => !child.IsNumber).ToList() :
                 node21.IsNumber ?
-                new List<Node>() { } :
-                new List<Node>() { node21 };
+                new List<NodeBase>() { } :
+                new List<NodeBase>() { node21 };
 
             var mult1 = new NodeFunction(MathOperations.Multiply, notValueNodes1.ToList());
             var mult2 = new NodeFunction(MathOperations.Multiply, notValueNodes2.ToList());
@@ -136,7 +108,7 @@ namespace MathParser
 
             if (mult1.Equals(mult2))
             {
-                var resultNodes = new List<Node>();
+                var resultNodes = new List<NodeBase>();
                 resultNodes.Add(new NodeNumber(value1 + value2));
                 resultNodes.AddRange(notValueNodes1);
                 return Simplify(new NodeFunction(MathOperations.Multiply, resultNodes));
@@ -145,14 +117,14 @@ namespace MathParser
                 return null;
         }
 
-        private static Node ReduceMultipleZero(Node node)
+        private static NodeFunction ReduceMultipleZero(NodeFunction node)
         {
             foreach (var child in node.Children)
             {
                 var childNumberNode = child as NodeNumber;
                 if (childNumberNode != null && childNumberNode.Number == 0)
                 {
-                    return new NodeNumber(0);
+                    return new NodeFunction();
                 }
             }
 

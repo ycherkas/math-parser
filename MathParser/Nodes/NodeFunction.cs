@@ -1,37 +1,40 @@
 ﻿using MathParser.Context;
 using MathParser.Enums;
 using MathParser.Helpers;
-using System.Xml.Linq;
 
 namespace MathParser.Nodes
 {
     // NodeBinary for binary operations such as Add, Subtract etc...
-    public class NodeFunction : Node
+    public class NodeFunction : NodeBase
     {
-        public NodeFunction(Node leftNode, Node rightNode, MathOperations operation)
+        public NodeFunction() { }
+
+        public NodeFunction(MathOperations operation, NodeBase leftNode, NodeBase rightNode)
         {
             Children.Add(leftNode);
             Children.Add(rightNode);
             Operation = operation;
         }
 
-        public NodeFunction(MathOperations operation, Node node)
+        public NodeFunction(MathOperations operation, NodeBase node)
         {
             Operation = operation;
             Children.Add(node);
         }
 
-        public NodeFunction(MathOperations operation, IEnumerable<Node> args)
+        public NodeFunction(MathOperations operation, IEnumerable<NodeBase> args)
         {
             Operation = operation;
             Children.AddRange(args);
         }
 
+        public override string StringValue => Operation.Value() ?? "???";
+
         public override bool IsTerminal => false;
 
-        private Node _leftNode => Children[0];
+        private NodeBase _leftNode => Children[0];
 
-        private Node _rightNode => Children[1];
+        private NodeBase _rightNode => Children[1];
 
         public override double Eval(IContext context)
         {
@@ -61,12 +64,40 @@ namespace MathParser.Nodes
         public override string ToString()
         {
             if (Operation == MathOperations.Minus)
-                return $"-{_leftNode.ToString()}";
+                return $"-{ToStringWithParentheses(Children[0])}";
 
             if (Children.Count == 1)
-                return _leftNode.ToString();
+                return Children[0].ToString();
 
-            return $"{_leftNode.ToString()}{Operation.Value()}{_rightNode.ToString()}";
+            var result = string.Empty;
+
+            for (var i = 0; i < Children.Count; i++)
+            {
+                if(i == Children.Count - 1)
+                {
+                    result += ToStringWithParentheses(Children[i]);
+                } else
+                {
+                    result += ToStringWithParentheses(Children[i]) + Operation.Value();
+                }
+            }
+
+            return result;
+        }
+
+        private string ToStringWithParentheses(NodeBase node)
+        {
+            if(Operation == MathOperations.Add || Operation == MathOperations.Subtract)
+            {
+                return node.ToString();
+            }
+
+            if (node.Children.Count > 1)
+            {
+                return $"({node.ToString()})";
+            }
+
+            return node.ToString();
         }
     }
 }
