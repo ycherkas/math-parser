@@ -11,13 +11,13 @@ namespace MathParser.Tests
             Assert.Equal(rootTreeNode.ToString(), test);
         }
 
-        //[Fact]
-        //public void SerializationTest2()
-        //{
-        //    var test = "a+b/c-e*sin(2*gamma)-f^2";
-        //    var rootTreeNode = Parser.Parse(test);
+        [Fact]
+        public void SerializationTest2()
+        {
+            var test = "a+b/c-e*sin(2*gamma)-f^2";
+            var rootTreeNode = Parser.Parse(test);
 
-        //    Assert.Equal(rootTreeNode.ToString(), test);
-        //}
+            Assert.Equal("a+b/c+-(e*sin(2*gamma))+-(f^2)", rootTreeNode.ToString());
+        }
     }
 }
