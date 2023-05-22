@@ -58,6 +58,14 @@ namespace MathParser.Nodes
 
             var result = function(leftVal, rightVal);
 
+            if (Children.Count > 2)
+            {
+                for (var i = 2; i < Children.Count; i++)
+                {
+                    result = function(result, Children[i].Eval(context));
+                }
+            }
+
             return result;
         }
 

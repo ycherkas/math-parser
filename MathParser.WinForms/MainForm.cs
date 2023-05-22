@@ -3,6 +3,7 @@ using MathParser.Nodes;
 using Microsoft.Msagl.Drawing;
 using MathParser.Helpers;
 using Microsoft.Msagl.GraphViewerGdi;
+using Microsoft.Msagl.DebugHelpers;
 
 namespace MathParser.WinForms
 {
@@ -62,10 +63,13 @@ namespace MathParser.WinForms
                     variables.Add(key, value);
                 }
 
-                ParseExpression(showGraph: true);
+                ParseExpression(showGraph: false);
+
+                var simplified = Simplifier.Simplify(_tree);
+                CreateGraph(simplified);
 
                 var context = new SimpleContext(variables);
-                var calculated = _tree.Eval(context);
+                var calculated = simplified.Eval(context);
                 lblCalculated.Text = calculated.ToString();
             }
             catch (Exception ex)
