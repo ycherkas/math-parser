@@ -45,22 +45,19 @@ namespace MathParser.Nodes
                     var nodeNumber = (NodeNumber)_leftNode;
                     return Operation == MathOperations.Minus ? -1 * nodeNumber.Number : nodeNumber.Number;
                 }
-                else if (_leftNode is NodeVariable)
+                else if (_leftNode is NodeVariable || _leftNode is NodeUnary || _leftNode is NodeFunction)
                 {
                     return Operation == MathOperations.Minus ? -1 * _leftNode.Eval(context) : _leftNode.Eval(context);
                 }
             }
 
-            var leftVal = _leftNode.Eval(context);
-            var rightVal = _rightNode.Eval(context);
-
             var function = FuncHelper.GetBinary(Operation);
 
-            var result = function(leftVal, rightVal);
+            double result = Children[0].Eval(context);
 
-            if (Children.Count > 2)
+            if (Children.Count >= 2)
             {
-                for (var i = 2; i < Children.Count; i++)
+                for (var i = 1; i < Children.Count; i++)
                 {
                     result = function(result, Children[i].Eval(context));
                 }

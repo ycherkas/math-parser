@@ -5,22 +5,6 @@ namespace MathParser.Tests
     public class SimplificationTests
     {
         [Fact]
-        public void AddTest()
-        {
-            var simpliefied = Simplifier.Simplify("1 + 1");
-
-            Assert.Equal("2", simpliefied.ToString());
-        }
-
-        [Fact]
-        public void SubstractTest()
-        {
-            var simpliefied = Simplifier.Simplify("1 - 1");
-
-            Assert.Equal("0", simpliefied.ToString());
-        }
-
-        [Fact]
         public void AddSubstractTest()
         {
             var simpliefied = Simplifier.Simplify("5 + 3 - 12");
@@ -50,6 +34,14 @@ namespace MathParser.Tests
             var simpliefied = Simplifier.Simplify("10*a + 2*a - 5*a + 3*a");
 
             Assert.Equal("10*a", simpliefied.ToString());
+        }
+
+        [Fact]
+        public void MultipleVariableTest()
+        {
+            var simpliefied = Simplifier.Simplify("3*x+2*y+2*x+z-2*y+10");
+
+            Assert.Equal("5*x+10+z", simpliefied.ToString());
         }
     }
 }

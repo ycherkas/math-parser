@@ -115,20 +115,6 @@ namespace MathParser
                 return null;
         }
 
-        private static NodeFunction ReduceMultipleZero(NodeFunction node)
-        {
-            foreach (var child in node.Children)
-            {
-                var childNumberNode = child as NodeNumber;
-                if (childNumberNode != null && childNumberNode.Number == 0)
-                {
-                    return new NodeFunction();
-                }
-            }
-
-            return node;
-        }
-
         private static NodeBase ReduceMultipleZero(NodeBase node)
         {
             foreach (var child in node.Children)
