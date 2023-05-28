@@ -28,7 +28,7 @@ namespace MathParser.WinForms
 
         private void ParseExpression(bool showGraph = false)
         {
-            var expression = Parser.Parse(txtFormula.Text);
+            var expression = ParserManager.Parse(txtFormula.Text);
 
             _tree = expression;
 
@@ -43,6 +43,7 @@ namespace MathParser.WinForms
             radioNaryForm.Enabled = true;
             radioBinaryForm.Checked = true;
             radioNaryForm.Checked = false;
+            lblCalculated.Text = "";
         }
 
         private void btnCalculate_Click(object sender, EventArgs e)

@@ -6,7 +6,7 @@ namespace MathParser.Tests
         public void SerializationTest()
         {
             var test = "a+a";
-            var rootTreeNode = Parser.Parse(test);
+            var rootTreeNode = ParserManager.Parse(test);
 
             Assert.Equal(rootTreeNode.ToString(), test);
         }
@@ -15,7 +15,7 @@ namespace MathParser.Tests
         public void SerializationTest2()
         {
             var test = "a+b/c-e*sin(2*gamma)-f^2";
-            var rootTreeNode = Parser.Parse(test);
+            var rootTreeNode = ParserManager.Parse(test);
 
             Assert.Equal("a+b/c+-(e*sin(2*gamma))+-(f^2)", rootTreeNode.ToString());
         }

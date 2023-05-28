@@ -8,7 +8,7 @@ namespace MathParser
     {
         public static NodeBase Simplify(string input)
         {
-            var node = Parser.Parse(input);
+            var node = ParserManager.Parse(input);
 
             return Simplify(node);
         }
