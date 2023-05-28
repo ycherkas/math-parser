@@ -32,7 +32,7 @@ namespace MathParser.Nodes
 
         public override string ToString()
         {
-            return $"{Operation.Value()}{_node.ToString()}";
+            return $"({Operation.Value()}{_node.ToString()})";
         }
     }
 }
