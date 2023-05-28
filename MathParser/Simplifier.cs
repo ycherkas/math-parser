@@ -35,6 +35,9 @@ namespace MathParser
                     {
                         node = node.Children[0];
                     }
+
+                    node = ReducePowers(node);
+
                     break;
             }
 
@@ -127,6 +130,66 @@ namespace MathParser
             }
 
             return node;
+        }
+
+        private static NodeBase ReducePowers(NodeBase node)
+        {
+            if (node is not NodeFunction)
+                return node;
+
+            var newChildren = new List<NodeBase>();
+            bool[] markedNodes = new bool[node.Children.Count];
+
+
+            for (int i = 0; i < node.Children.Count; i++)
+            {
+                var child = node.Children[i];
+
+                var basis = GetPowerBasis(child);
+                var nodesWithSameBasis = new List<NodeBase>();
+                if (!markedNodes[i])
+                    nodesWithSameBasis.Add(child);
+
+                for (int j = i + 1; j < node.Children.Count; j++)
+                    if (basis.Equals(GetPowerBasis(node.Children[j])) && !markedNodes[j])
+                    {
+                        nodesWithSameBasis.Add(node.Children[j]);
+                        markedNodes[j] = true;
+                    }
+
+                if (nodesWithSameBasis.Count > 1)
+                {
+                    newChildren.Add(Simplify(new NodeFunction(MathOperations.Power,
+                        basis,
+                        Simplify(new NodeFunction(MathOperations.Add,
+                            nodesWithSameBasis.Select(node => GetPowerFactor(node)).ToList()))
+                    )));
+                }
+                else if (!markedNodes[i])
+                    newChildren.Add(child);
+            }
+
+            if (node.Children.Count != newChildren.Count)
+            {
+                if (newChildren.Count == 1)
+                    return newChildren[0];
+                else
+                    return new NodeFunction(MathOperations.Multiply, newChildren);
+            }
+            else
+                return node;
+        }
+
+        private static NodeBase GetPowerBasis(NodeBase node)
+        {
+            return (node is NodeFunction funcNode && funcNode.Operation == MathOperations.Power) ?
+                node.Children[0] : node;
+        }
+
+        private static NodeBase GetPowerFactor(NodeBase node)
+        {
+            return (node is NodeFunction funcNode && funcNode.Operation == MathOperations.Power)
+                ? node.Children[1] : new NodeNumber(1);
         }
     }
 }

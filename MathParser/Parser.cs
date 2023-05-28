@@ -49,11 +49,12 @@ namespace MathParser
                 // Parse the right hand side of the expression
                 var rightNode = ParseMultiplyDivide();
 
-                if(operation == MathOperations.Subtract)
+                if (operation == MathOperations.Subtract)
                 {
                     var minusRightNode = new NodeFunction(MathOperations.Minus, rightNode);
                     leftNode = new NodeFunction(MathOperations.Add, leftNode, minusRightNode);
-                } else
+                }
+                else
                 {
                     // Create a binary node and use it as the left-hand side from now on
                     leftNode = new NodeFunction(operation, leftNode, rightNode);
@@ -88,8 +89,17 @@ namespace MathParser
                 // Parse the right hand side of the expression
                 var rightNode = ParsePower();
 
-                // Create a binary node and use it as the left-hand side from now on
-                leftNode = new NodeFunction(operation, leftNode, rightNode);
+                if(operation == MathOperations.Divide)
+                {
+                    var minusOneNode = new NodeNumber(-1);
+                    var powerRightNode = new NodeFunction(MathOperations.Power, rightNode, minusOneNode);
+                    leftNode = new NodeFunction(MathOperations.Multiply, leftNode, powerRightNode);
+                }
+                else
+                {
+                    // Create a binary node and use it as the left-hand side from now on
+                    leftNode = new NodeFunction(operation, leftNode, rightNode);
+                }
             }
         }
 

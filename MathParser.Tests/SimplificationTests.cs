@@ -37,6 +37,30 @@ namespace MathParser.Tests
         }
 
         [Fact]
+        public void SameVariableDivisionTest()
+        {
+            var simplified = Simplifier.Simplify("a/a");
+
+            Assert.Equal("a^0", simplified.ToString());
+        }
+
+        [Fact]
+        public void SimpleDivisionTest()
+        {
+            var simplified = Simplifier.Simplify("a*a/a");
+
+            Assert.Equal("a^1", simplified.ToString());
+        }
+
+        [Fact]
+        public void PowerTest()
+        {
+            var simplified = Simplifier.Simplify("a*(a^-1)");
+
+            Assert.Equal("a^0", simplified.ToString());
+        }
+
+        [Fact]
         public void MultipleVariableTest()
         {
             var simpliefied = Simplifier.Simplify("3*x+2*y+2*x+z-2*y+10");
