@@ -8,14 +8,14 @@ namespace MathParser.Tests
         public void AddTest()
         {
             var context = new SimpleContext();
-            Assert.Equal(2, Parser.Parse("1 + 1").Eval(context));
+            Assert.Equal(2, ParserManager.Parse("1 + 1").Eval(context));
         }
 
         [Fact]
         public void SubstractTest()
         {
             var context = new SimpleContext();
-            Assert.Equal(1, Parser.Parse("2 - 1").Eval(context));
+            Assert.Equal(1, ParserManager.Parse("2 - 1").Eval(context));
         }
 
         [Fact]
@@ -29,7 +29,7 @@ namespace MathParser.Tests
             };
             var context = new SimpleContext(variables);
             var formula = "2*x+y^2-z";
-            var expression = Parser.Parse(formula);
+            var expression = ParserManager.Parse(formula);
             var result = expression.Eval(context);
             Assert.Equal(3, result);
         }

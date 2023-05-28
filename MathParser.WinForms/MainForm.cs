@@ -28,7 +28,7 @@ namespace MathParser.WinForms
 
         private void ParseExpression(bool showGraph = false)
         {
-            var expression = Parser.Parse(txtFormula.Text);
+            var expression = ParserManager.Parse(txtFormula.Text);
 
             _tree = expression;
 
@@ -43,6 +43,7 @@ namespace MathParser.WinForms
             radioNaryForm.Enabled = true;
             radioBinaryForm.Checked = true;
             radioNaryForm.Checked = false;
+            lblCalculated.Text = "";
         }
 
         private void btnCalculate_Click(object sender, EventArgs e)
@@ -63,13 +64,14 @@ namespace MathParser.WinForms
                     variables.Add(key, value);
                 }
 
-                ParseExpression(showGraph: false);
+                if (_tree == null)
+                {
+                    ParseExpression(showGraph: true);
+                }
 
-                var simplified = Simplifier.Simplify(_tree);
-                CreateGraph(simplified);
 
                 var context = new SimpleContext(variables);
-                var calculated = simplified.Eval(context);
+                var calculated = _tree.Eval(context);
                 lblCalculated.Text = calculated.ToString();
             }
             catch (Exception ex)
@@ -139,8 +141,9 @@ namespace MathParser.WinForms
         {
             if (!node.Children.Any()) return;
 
-            foreach (var child in node.Children)
+            for(var i = node.Children.Count - 1; i >= 0; i--)
             {
+                var child = node.Children[i];
                 var childNode = graph.AddNode(Guid.NewGuid().ToString());
                 childNode.LabelText = child.StringValue;
                 graph.AddEdge(parrentNode.Id, childNode.Id);

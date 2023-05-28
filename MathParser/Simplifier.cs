@@ -8,7 +8,7 @@ namespace MathParser
     {
         public static NodeBase Simplify(string input)
         {
-            var node = Parser.Parse(input);
+            var node = ParserManager.Parse(input);
 
             return Simplify(node);
         }
@@ -113,20 +113,6 @@ namespace MathParser
             }
             else
                 return null;
-        }
-
-        private static NodeFunction ReduceMultipleZero(NodeFunction node)
-        {
-            foreach (var child in node.Children)
-            {
-                var childNumberNode = child as NodeNumber;
-                if (childNumberNode != null && childNumberNode.Number == 0)
-                {
-                    return new NodeFunction();
-                }
-            }
-
-            return node;
         }
 
         private static NodeBase ReduceMultipleZero(NodeBase node)
