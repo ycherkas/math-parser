@@ -69,7 +69,7 @@ namespace MathParser.Nodes
         public override string ToString()
         {
             if (Operation == MathOperations.Minus)
-                return $"-{ToStringWithParentheses(Children[0])}";
+                return $"(-{ToStringWithParentheses(Children[0])})";
 
             if (Children.Count == 1)
                 return Children[0].ToString();
@@ -92,7 +92,8 @@ namespace MathParser.Nodes
 
         private string ToStringWithParentheses(NodeBase node)
         {
-            if(Operation == MathOperations.Add || Operation == MathOperations.Subtract)
+            if(Operation == MathOperations.Add || Operation == MathOperations.Subtract || 
+                node.Operation == MathOperations.Multiply || node.Operation == MathOperations.Divide)
             {
                 return node.ToString();
             }
