@@ -17,7 +17,7 @@ namespace MathParser.Tests
         {
             var simpliefied = Simplifier.Simplify("a + a");
 
-            Assert.Equal("2*a", simpliefied.ToString());
+            Assert.Equal("a*2", simpliefied.ToString());
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace MathParser.Tests
         {
             var simpliefied = Simplifier.Simplify("10*a + 2*a - 5*a + 3*a");
 
-            Assert.Equal("10*a", simpliefied.ToString());
+            Assert.Equal("a*10", simpliefied.ToString());
         }
 
         [Fact]
@@ -41,7 +41,7 @@ namespace MathParser.Tests
         {
             var simplified = Simplifier.Simplify("a/a");
 
-            Assert.Equal("a^0", simplified.ToString());
+            Assert.Equal("1", simplified.ToString());
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace MathParser.Tests
         {
             var simplified = Simplifier.Simplify("a*a/a");
 
-            Assert.Equal("a^1", simplified.ToString());
+            Assert.Equal("a", simplified.ToString());
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace MathParser.Tests
         {
             var simplified = Simplifier.Simplify("a*(a^-1)");
 
-            Assert.Equal("a^0", simplified.ToString());
+            Assert.Equal("1", simplified.ToString());
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace MathParser.Tests
         {
             var simpliefied = Simplifier.Simplify("3*x+2*y+2*x+z-2*y+10");
 
-            Assert.Equal("5*x+10+z", simpliefied.ToString());
+            Assert.Equal("x*5+10+z", simpliefied.ToString());
         }
     }
 }
