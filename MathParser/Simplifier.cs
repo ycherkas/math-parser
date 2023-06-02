@@ -159,10 +159,12 @@ namespace MathParser
 
                 if (nodesWithSameBasis.Count > 1)
                 {
+                    var newPowerFactor = Simplify(new NodeFunction(MathOperations.Add,
+                            nodesWithSameBasis.Select(node => GetPowerFactor(node)).ToList()));
+
                     newChildren.Add(Simplify(new NodeFunction(MathOperations.Power,
                         basis,
-                        Simplify(new NodeFunction(MathOperations.Add,
-                            nodesWithSameBasis.Select(node => GetPowerFactor(node)).ToList()))
+                        newPowerFactor
                     )));
                 }
                 else if (!markedNodes[i])
