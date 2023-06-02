@@ -26,25 +26,28 @@ namespace MathParser
             {
                 case MathOperations.Add:
                     node = node.ToMultichildTree();
-                    ReduceSummands(node);
+                    node = ReduceSummands(node);
                     break;
                 case MathOperations.Multiply:
                     node = node.ToMultichildTree();
-                    node = ReduceMultipleZero(node);
+                    node = MultiplyNumbers(node);
                     if (node.Children.Count == 1)
                     {
                         node = node.Children[0];
                     }
 
-                    node = ReducePowers(node);
+                    node = AggregatePowers(node);
 
+                    break;
+                case MathOperations.Power:
+                    node = SimplifyPower(node);
                     break;
             }
 
             return node;
         }
 
-        private static void ReduceSummands(NodeBase node)
+        private static NodeBase ReduceSummands(NodeBase node)
         {
             int i = 0;
             while (i < node.Children.Count)
@@ -63,6 +66,13 @@ namespace MathParser
                 }
                 i++;
             }
+
+            if (node.Children.Count == 1)
+            {
+                return node.Children[0];
+            }
+
+            return node;
         }
 
         private static NodeBase ReduceAddition(NodeBase node1, NodeBase node2)
@@ -118,21 +128,55 @@ namespace MathParser
                 return null;
         }
 
-        private static NodeBase ReduceMultipleZero(NodeBase node)
+        private static NodeBase MultiplyNumbers(NodeBase node)
         {
-            foreach (var child in node.Children)
+            var numbers = node.Children.Where(child => child is NodeNumber).Cast<NodeNumber>().ToList();
+            var notNumbers = node.Children.Where(child => child is not NodeNumber).ToList();
+
+            double result = 1;
+            foreach (var number in numbers)
             {
-                var childNumberNode = child as NodeNumber;
-                if (childNumberNode != null && childNumberNode.Number == 0)
-                {
-                    return new NodeNumber(0);
-                }
+                result *= number.Number;
             }
 
-            return node;
+            if(result == 0)
+            {
+                return new NodeNumber(0);
+            }
+
+            if(result == 1)
+            {
+                if (notNumbers.Count == 0)
+                    return new NodeNumber(1);
+
+                if(notNumbers.Count == 1)
+                    return notNumbers.First();
+
+                return new NodeFunction(MathOperations.Multiply, notNumbers);
+            }
+
+            if (result == -1)
+            {
+                if (notNumbers.Count == 0)
+                    return new NodeNumber(-1);
+
+                if (notNumbers.Count == 1)
+                    return new NodeUnary(MathOperations.Minus, notNumbers[0]);
+
+                return new NodeUnary(MathOperations.Minus, new NodeFunction(MathOperations.Multiply, notNumbers));
+            }
+
+            if(notNumbers.Count == 0)
+            {
+                return new NodeNumber(result);
+            }
+
+            notNumbers.Add(new NodeNumber(result));
+
+            return new NodeFunction(MathOperations.Multiply, notNumbers);
         }
 
-        private static NodeBase ReducePowers(NodeBase node)
+        private static NodeBase AggregatePowers(NodeBase node)
         {
             if (node is not NodeFunction)
                 return node;
@@ -176,7 +220,7 @@ namespace MathParser
                 if (newChildren.Count == 1)
                     return newChildren[0];
                 else
-                    return new NodeFunction(MathOperations.Multiply, newChildren);
+                    return Simplify(new NodeFunction(MathOperations.Multiply, newChildren));
             }
             else
                 return node;
@@ -192,6 +236,23 @@ namespace MathParser
         {
             return (node is NodeFunction funcNode && funcNode.Operation == MathOperations.Power)
                 ? node.Children[1] : new NodeNumber(1);
+        }
+
+        private static NodeBase SimplifyPower(NodeBase node)
+        {
+            if (node.Children[1] is NodeNumber powerFactor)
+            {
+                if (powerFactor.Number == 0)
+                {
+                    return new NodeNumber(1);
+                }
+                else if (powerFactor.Number == 1)
+                {
+                    return node.Children[0];
+                }
+            }
+
+            return node;
         }
     }
 }

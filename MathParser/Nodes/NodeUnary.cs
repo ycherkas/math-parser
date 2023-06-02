@@ -7,7 +7,7 @@ namespace MathParser.Nodes
     // NodeUnary for unary operations such as Negate
     public class NodeUnary : NodeBase
     {
-        public NodeUnary(NodeBase node, MathOperations operation)
+        public NodeUnary(MathOperations operation, NodeBase node)
         {
             Children.Add(node);
             Operation = operation;

@@ -17,7 +17,7 @@ namespace MathParser.Tests
             var test = "a+b/c-e*sin(2*gamma)-f^2";
             var rootTreeNode = ParserManager.Parse(test);
 
-            Assert.Equal("a+b/c+-(e*sin(2*gamma))+-(f^2)", rootTreeNode.ToString());
+            Assert.Equal("a+b*(c^-1)+(-e*sin(2*gamma))+(-(f^2))", rootTreeNode.ToString());
         }
     }
 }
