@@ -30,14 +30,8 @@ namespace MathParser.Nodes
                 return false;
         }
 
-        public override double Eval(IContext ctx)
-        {
-            return ctx.ResolveVariable(StringValue);
-        }
+        public override double Eval(IContext ctx) => ctx.ResolveVariable(StringValue);
 
-        public override string ToString()
-        {
-            return StringValue;
-        }
+        public override string ToString() => StringValue;
     }
 }
