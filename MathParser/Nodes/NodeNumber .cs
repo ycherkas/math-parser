@@ -12,15 +12,9 @@ namespace MathParser.Nodes
 
         public double Number { get; set; }
 
-        public override double Eval(IContext context)
-        {
-            return Number;
-        }
+        public override double Eval(IContext context) => Number;
 
-        public override string ToString()
-        {
-            return Number.ToString();
-        }
+        public override string ToString() => Number.ToString();
 
         public override bool Equals(object obj)
         {
@@ -73,11 +67,6 @@ namespace MathParser.Nodes
                 return v.Number == Number;
             else
                 return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return Number.GetHashCode();
         }
     }
 }
