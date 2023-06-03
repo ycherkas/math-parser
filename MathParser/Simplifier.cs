@@ -163,9 +163,9 @@ namespace MathParser
                     return new NodeNumber(-1);
 
                 if (notNumbers.Count == 1)
-                    return new NodeUnary(MathOperations.Minus, notNumbers[0]);
+                    return new NodeFunction(MathOperations.Minus, notNumbers[0]);
 
-                return new NodeUnary(MathOperations.Minus, new NodeFunction(MathOperations.Multiply, notNumbers));
+                return new NodeFunction(MathOperations.Minus, new NodeFunction(MathOperations.Multiply, notNumbers));
             }
 
             if(notNumbers.Count == 0)
