@@ -65,7 +65,7 @@ namespace MathParser.Tests
         {
             var simpliefied = Simplifier.Simplify("3*x+2*y+2*x+z-2*y+10");
 
-            Assert.Equal("x*5+10+z", simpliefied.ToString());
+            Assert.Equal("10+x*5+z", simpliefied.ToString());
         }
     }
 }

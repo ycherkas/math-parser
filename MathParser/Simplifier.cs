@@ -10,6 +10,8 @@ namespace MathParser
         {
             var node = ParserManager.Parse(input);
 
+            node.Sort();
+
             return Simplify(node);
         }
 
@@ -114,8 +116,8 @@ namespace MathParser
             var mult1 = new NodeFunction(MathOperations.Multiply, notValueNodes1.ToList());
             var mult2 = new NodeFunction(MathOperations.Multiply, notValueNodes2.ToList());
 
-            //mult1.Sort();
-            //mult2.Sort();
+            mult1.Sort();
+            mult2.Sort();
 
             if (mult1.Equals(mult2))
             {
