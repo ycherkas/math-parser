@@ -1,18 +1,13 @@
 ﻿using MathParser.Context;
-using MathParser.Helpers;
 
 namespace MathParser.Nodes
 {
     public class NodeNumber : NodeBase
     {
-        public override string StringValue => Number.ToString();
-
-        public override bool IsTerminal => true;
-
-
         public NodeNumber(double number)
         {
             Number = number;
+            StringValue = Number.ToString();
         }
 
         public double Number { get; set; }

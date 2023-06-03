@@ -1,19 +1,15 @@
 ﻿using MathParser.Context;
 using MathParser.Enums;
-using System.Globalization;
-using System.Xml.Linq;
 
 namespace MathParser.Nodes
 {
-    public abstract class NodeBase: IComparable<NodeBase>
+    public abstract class NodeBase : IComparable<NodeBase>
     {
         public List<NodeBase> Children = new List<NodeBase>();
 
         internal MathOperations Operation;
 
-        public abstract bool IsTerminal { get; }
-
-        public abstract string StringValue { get; }
+        public string StringValue { get; set; }
 
         public bool IsNumber => this is NodeNumber;
 

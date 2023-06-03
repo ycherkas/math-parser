@@ -5,18 +5,10 @@ namespace MathParser.Nodes
     // Represents a variable (or a constant) in an expression.  eg: "2 * pi"
     public class NodeVariable : NodeBase
     {
-        string _variableName;
-
         public NodeVariable(string variableName)
         {
-            _variableName = variableName;
+            StringValue = variableName;
         }
-
-        public override string StringValue => Name;
-
-        public override bool IsTerminal => false;
-
-        public string Name => _variableName;
 
         public override bool Equals(object obj)
         {
@@ -25,7 +17,7 @@ namespace MathParser.Nodes
 
             if (obj is string)
             {
-                if ((string)obj == Name)
+                if ((string)obj == StringValue)
                     return true;
                 else
                     return false;
@@ -33,19 +25,19 @@ namespace MathParser.Nodes
 
             var v = obj as NodeVariable;
             if (v != null)
-                return v.Name == Name;
+                return v.StringValue == StringValue;
             else
                 return false;
         }
 
         public override double Eval(IContext ctx)
         {
-            return ctx.ResolveVariable(_variableName);
+            return ctx.ResolveVariable(StringValue);
         }
 
         public override string ToString()
         {
-            return _variableName;
+            return StringValue;
         }
     }
 }

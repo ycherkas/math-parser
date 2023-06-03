@@ -3,237 +3,237 @@ using MathParser.Nodes;
 
 namespace MathParser
 {
-    public class Parser
+public class Parser
+{
+    Tokenizer _tokenizer;
+
+    public Parser(Tokenizer tokenizer)
     {
-        Tokenizer _tokenizer;
+        _tokenizer = tokenizer;
+    }
 
-        public Parser(Tokenizer tokenizer)
+    public NodeBase ParseExpression()
+    {
+        var expression = ParseAddSubtract();
+
+        if (_tokenizer.Token != Token.EOF)
+            throw new ArgumentException($"Unexpected characters at the end of expression");
+
+        return expression;
+    }
+
+    // Parse an sequence of add/subtract operators
+    private NodeBase ParseAddSubtract()
+    {
+        var leftNode = ParseMultiplyDivide();
+
+        while (true)
         {
-            _tokenizer = tokenizer;
-        }
+            var operation = MathOperations.Undefined;
 
-        public NodeBase ParseExpression()
-        {
-            var expression = ParseAddSubtract();
-
-            if (_tokenizer.Token != Token.EOF)
-                throw new ArgumentException($"Unexpected characters at the end of expression");
-
-            return expression;
-        }
-
-        // Parse an sequence of add/subtract operators
-        private NodeBase ParseAddSubtract()
-        {
-            var leftNode = ParseMultiplyDivide();
-
-            while (true)
+            if (_tokenizer.Token == Token.Add)
             {
-                var operation = MathOperations.Undefined;
-
-                if (_tokenizer.Token == Token.Add)
-                {
-                    operation = MathOperations.Add;
-                }
-                else if (_tokenizer.Token == Token.Subtract)
-                {
-                    operation = MathOperations.Subtract;
-                }
-
-                if (operation == MathOperations.Undefined)
-                    return leftNode;
-
-                // Skip the operator
-                _tokenizer.NextToken();
-
-                // Parse the right hand side of the expression
-                var rightNode = ParseMultiplyDivide();
-
-                if (operation == MathOperations.Subtract)
-                {
-                    var minusRightNode = new NodeFunction(MathOperations.Minus, rightNode);
-                    leftNode = new NodeFunction(MathOperations.Add, leftNode, minusRightNode);
-                }
-                else
-                {
-                    // Create a binary node and use it as the left-hand side from now on
-                    leftNode = new NodeFunction(operation, leftNode, rightNode);
-                }
+                operation = MathOperations.Add;
             }
-        }
-
-        // Parse an sequence of multiply/divide operators
-        private NodeBase ParseMultiplyDivide()
-        {
-            // Parse the left hand side
-            var leftNode = ParsePower();
-
-            while (true)
+            else if (_tokenizer.Token == Token.Subtract)
             {
-                var operation = MathOperations.Undefined;
-                if (_tokenizer.Token == Token.Multiply)
-                {
-                    operation = MathOperations.Multiply;
-                }
-                else if (_tokenizer.Token == Token.Divide)
-                {
-                    operation = MathOperations.Divide;
-                }
-
-                if (operation == MathOperations.Undefined)
-                    return leftNode;
-
-                // Skip the operator
-                _tokenizer.NextToken();
-
-                // Parse the right hand side of the expression
-                var rightNode = ParsePower();
-
-                if(operation == MathOperations.Divide)
-                {
-                    var minusOneNode = new NodeNumber(-1);
-                    var powerRightNode = new NodeFunction(MathOperations.Power, rightNode, minusOneNode);
-                    leftNode = new NodeFunction(MathOperations.Multiply, leftNode, powerRightNode);
-                }
-                else
-                {
-                    // Create a binary node and use it as the left-hand side from now on
-                    leftNode = new NodeFunction(operation, leftNode, rightNode);
-                }
+                operation = MathOperations.Subtract;
             }
-        }
 
-        // Parse an sequence of power operators
-        private NodeBase ParsePower()
-        {
-            // Parse the left hand side
-            var leftNode = ParseUnary();
+            if (operation == MathOperations.Undefined)
+                return leftNode;
 
-            while (true)
+            // Skip the operator
+            _tokenizer.NextToken();
+
+            // Parse the right hand side of the expression
+            var rightNode = ParseMultiplyDivide();
+
+            if (operation == MathOperations.Subtract)
             {
-                var operation = MathOperations.Undefined;
-                if (_tokenizer.Token == Token.Power)
-                {
-                    operation = MathOperations.Power;
-                }
-
-                if (operation == MathOperations.Undefined)
-                    return leftNode;
-
-                // Skip the operator
-                _tokenizer.NextToken();
-
-                // Parse the right hand side of the expression
-                var rightNode = ParseUnary();
-
+                var minusRightNode = new NodeFunction(MathOperations.Minus, rightNode);
+                leftNode = new NodeFunction(MathOperations.Add, leftNode, minusRightNode);
+            }
+            else
+            {
                 // Create a binary node and use it as the left-hand side from now on
                 leftNode = new NodeFunction(operation, leftNode, rightNode);
             }
         }
+    }
 
-        // Parse a unary operator (eg: negative/positive)
-        private NodeBase ParseUnary()
+    // Parse an sequence of multiply/divide operators
+    private NodeBase ParseMultiplyDivide()
+    {
+        // Parse the left hand side
+        var leftNode = ParsePower();
+
+        while (true)
         {
-            while (true)
+            var operation = MathOperations.Undefined;
+            if (_tokenizer.Token == Token.Multiply)
             {
-                if (_tokenizer.Token == Token.Add)
-                {
-                    _tokenizer.NextToken();
-                    continue;
-                }
+                operation = MathOperations.Multiply;
+            }
+            else if (_tokenizer.Token == Token.Divide)
+            {
+                operation = MathOperations.Divide;
+            }
 
-                if (_tokenizer.Token == Token.Subtract)
-                {
-                    _tokenizer.NextToken();
+            if (operation == MathOperations.Undefined)
+                return leftNode;
 
-                    // Note this recurses to self to support negative of a negative
-                    var node = ParseUnary();
+            // Skip the operator
+            _tokenizer.NextToken();
 
-                    // Create unary node
-                    return new NodeFunction(MathOperations.Minus, node);
-                }
+            // Parse the right hand side of the expression
+            var rightNode = ParsePower();
 
-                return ParseLeaf();
+            if(operation == MathOperations.Divide)
+            {
+                var minusOneNode = new NodeNumber(-1);
+                var powerRightNode = new NodeFunction(MathOperations.Power, rightNode, minusOneNode);
+                leftNode = new NodeFunction(MathOperations.Multiply, leftNode, powerRightNode);
+            }
+            else
+            {
+                // Create a binary node and use it as the left-hand side from now on
+                leftNode = new NodeFunction(operation, leftNode, rightNode);
             }
         }
+    }
 
-        private NodeBase ParseLeaf()
+    // Parse an sequence of power operators
+    private NodeBase ParsePower()
+    {
+        // Parse the left hand side
+        var leftNode = ParseUnary();
+
+        while (true)
         {
-            if (_tokenizer.Token == Token.Number)
+            var operation = MathOperations.Undefined;
+            if (_tokenizer.Token == Token.Power)
             {
-                var node = new NodeNumber(_tokenizer.Number);
-                _tokenizer.NextToken();
-                return node;
+                operation = MathOperations.Power;
             }
 
-            // Parenthesis?
-            if (_tokenizer.Token == Token.OpenParens)
+            if (operation == MathOperations.Undefined)
+                return leftNode;
+
+            // Skip the operator
+            _tokenizer.NextToken();
+
+            // Parse the right hand side of the expression
+            var rightNode = ParseUnary();
+
+            // Create a binary node and use it as the left-hand side from now on
+            leftNode = new NodeFunction(operation, leftNode, rightNode);
+        }
+    }
+
+    // Parse a unary operator (eg: negative/positive)
+    private NodeBase ParseUnary()
+    {
+        while (true)
+        {
+            if (_tokenizer.Token == Token.Add)
             {
-                // Skip '('
+                _tokenizer.NextToken();
+                continue;
+            }
+
+            if (_tokenizer.Token == Token.Subtract)
+            {
                 _tokenizer.NextToken();
 
-                // Parse a top-level expression
-                var node = ParseAddSubtract();
+                // Note this recurses to self to support negative of a negative
+                var node = ParseUnary();
+
+                // Create unary node
+                return new NodeFunction(MathOperations.Minus, node);
+            }
+
+            return ParseLeaf();
+        }
+    }
+
+    private NodeBase ParseLeaf()
+    {
+        if (_tokenizer.Token == Token.Number)
+        {
+            var node = new NodeNumber(_tokenizer.Number);
+            _tokenizer.NextToken();
+            return node;
+        }
+
+        // Parenthesis?
+        if (_tokenizer.Token == Token.OpenParens)
+        {
+            // Skip '('
+            _tokenizer.NextToken();
+
+            // Parse a top-level expression
+            var node = ParseAddSubtract();
+
+            // Check and skip ')'
+            if (_tokenizer.Token != Token.CloseParens)
+                throw new ArgumentException("Missing close parenthesis");
+
+            _tokenizer.NextToken();
+
+            // Return
+            return node;
+        }
+
+        // Variable
+        if (_tokenizer.Token == Token.Identifier)
+        {
+            // Capture the name and skip it
+            var name = _tokenizer.Identifier;
+            _tokenizer.NextToken();
+
+            // Parens indicate a function call, otherwise just a variable
+            if (_tokenizer.Token != Token.OpenParens)
+            {
+                // Variable
+                return new NodeVariable(name);
+            }
+            else
+            {
+                // Function call
+
+                // Skip parens
+                _tokenizer.NextToken();
+
+                // Parse arguments
+                var arguments = new List<NodeBase>();
+                while (true)
+                {
+                    // Parse argument and add to list
+                    arguments.Add(ParseAddSubtract());
+
+                    // Is there another argument?
+                    if (_tokenizer.Token == Token.Comma)
+                    {
+                        _tokenizer.NextToken();
+                        continue;
+                    }
+
+                    // Get out
+                    break;
+                }
 
                 // Check and skip ')'
                 if (_tokenizer.Token != Token.CloseParens)
                     throw new ArgumentException("Missing close parenthesis");
-
                 _tokenizer.NextToken();
 
-                // Return
-                return node;
+                // Create the function call node
+                return new NodeFunctionCall(name, arguments.ToArray());
             }
-
-            // Variable
-            if (_tokenizer.Token == Token.Identifier)
-            {
-                // Capture the name and skip it
-                var name = _tokenizer.Identifier;
-                _tokenizer.NextToken();
-
-                // Parens indicate a function call, otherwise just a variable
-                if (_tokenizer.Token != Token.OpenParens)
-                {
-                    // Variable
-                    return new NodeVariable(name);
-                }
-                else
-                {
-                    // Function call
-
-                    // Skip parens
-                    _tokenizer.NextToken();
-
-                    // Parse arguments
-                    var arguments = new List<NodeBase>();
-                    while (true)
-                    {
-                        // Parse argument and add to list
-                        arguments.Add(ParseAddSubtract());
-
-                        // Is there another argument?
-                        if (_tokenizer.Token == Token.Comma)
-                        {
-                            _tokenizer.NextToken();
-                            continue;
-                        }
-
-                        // Get out
-                        break;
-                    }
-
-                    // Check and skip ')'
-                    if (_tokenizer.Token != Token.CloseParens)
-                        throw new ArgumentException("Missing close parenthesis");
-                    _tokenizer.NextToken();
-
-                    // Create the function call node
-                    return new NodeFunctionCall(name, arguments.ToArray());
-                }
-            }
-
-            throw new ArgumentException($"Unexpect token: {_tokenizer.Token}");
         }
+
+        throw new ArgumentException($"Unexpect token: {_tokenizer.Token}");
     }
+}
 }

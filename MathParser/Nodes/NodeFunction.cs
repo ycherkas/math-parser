@@ -11,30 +11,27 @@ namespace MathParser.Nodes
 
         public NodeFunction(MathOperations operation, NodeBase leftNode, NodeBase rightNode)
         {
+            Operation = operation;
+            StringValue = Operation.Value();
             Children.Add(leftNode);
             Children.Add(rightNode);
-            Operation = operation;
         }
 
         public NodeFunction(MathOperations operation, NodeBase node)
         {
             Operation = operation;
+            StringValue = Operation.Value();
             Children.Add(node);
         }
 
         public NodeFunction(MathOperations operation, IEnumerable<NodeBase> args)
         {
             Operation = operation;
+            StringValue = Operation.Value();
             Children.AddRange(args);
         }
 
-        public override string StringValue => Operation.Value() ?? "???";
-
-        public override bool IsTerminal => false;
-
         private NodeBase _leftNode => Children[0];
-
-        private NodeBase _rightNode => Children[1];
 
         public override double Eval(IContext context)
         {
@@ -45,7 +42,7 @@ namespace MathParser.Nodes
                     var nodeNumber = (NodeNumber)_leftNode;
                     return Operation == MathOperations.Minus ? -1 * nodeNumber.Number : nodeNumber.Number;
                 }
-                else if (_leftNode is NodeVariable || _leftNode is NodeUnary || _leftNode is NodeFunction)
+                else if (_leftNode is NodeVariable || _leftNode is NodeFunction)
                 {
                     return Operation == MathOperations.Minus ? -1 * _leftNode.Eval(context) : _leftNode.Eval(context);
                 }
