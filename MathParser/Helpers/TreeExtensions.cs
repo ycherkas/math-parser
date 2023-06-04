@@ -28,6 +28,20 @@ namespace MathParser.Helpers
             return node;
         }
 
+        public static NodeBase ToMultichildTreeFull(this NodeBase node)
+        {
+            var nodeFunction = node as NodeFunction;
+
+            if (nodeFunction == null) return node;
+
+            foreach(var child in nodeFunction.Children)
+            {
+                ToMultichildTreeFull(child);
+            }
+
+            return ToMultichildTree(nodeFunction);
+        }
+
         public static NodeBase ToMultichildTree(this NodeBase node)
         {
             var nodeFunction = node as NodeFunction;
