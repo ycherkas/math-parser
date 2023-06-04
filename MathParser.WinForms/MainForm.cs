@@ -87,12 +87,12 @@ namespace MathParser.WinForms
             {
                 ParseExpression();
 
+                radioNaryForm.Checked = true;
+
                 var simplified = Simplifier.Simplify(_tree);
                 lblSimplified.Text = simplified.ToString();
 
                 CreateGraph(simplified);
-
-                radioNaryForm.Checked = true;
             }
             catch (Exception ex)
             {
@@ -118,7 +118,7 @@ namespace MathParser.WinForms
 
             if (rb == null || !rb.Checked || _tree == null) return;
 
-            _tree = _tree.ToMultichildTree();
+            _tree = _tree.ToMultichildTreeFull();
 
             CreateGraph(_tree);
         }
