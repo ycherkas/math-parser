@@ -43,7 +43,8 @@ namespace MathParser.WinForms
             radioNaryForm.Enabled = true;
             radioBinaryForm.Checked = true;
             radioNaryForm.Checked = false;
-            lblCalculated.Text = "";
+            lblCalculated.Text = "...";
+            lblSimplified.Text = "...";
         }
 
         private void btnCalculate_Click(object sender, EventArgs e)
