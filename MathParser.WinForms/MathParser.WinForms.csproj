@@ -16,4 +16,10 @@
     <ProjectReference Include="..\MathParser\MathParser.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="PolynomForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>
