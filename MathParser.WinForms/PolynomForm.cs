@@ -39,8 +39,22 @@ namespace MathParser.WinForms
                 CreateGraph(expression);
             }
 
-            var isPolynom = expression.IsPolynom();
-            lblIsPolynom.Text = isPolynom.ToString();
+            expression = Simplifier.Simplify(expression);
+
+            bool isPolynom;
+            var variablesString = txtVariables.Text;
+            if (!string.IsNullOrEmpty(variablesString))
+            {
+                var variables = variablesString.Split(',').ToList().Select(v => Simplifier.Simplify(v)).ToList();
+                isPolynom = expression.IsPolynom(variables);
+                lblIsPolynom.Text = isPolynom.ToString();
+            }
+            else
+            {
+                isPolynom = expression.IsPolynom();
+                lblIsPolynom.Text = isPolynom.ToString();
+            }
+
             lblResult.Text = "...";
         }
 

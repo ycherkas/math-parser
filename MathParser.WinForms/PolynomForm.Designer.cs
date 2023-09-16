@@ -41,6 +41,8 @@
             lblResult = new Label();
             gViewer = new Microsoft.Msagl.GraphViewerGdi.GViewer();
             panel1 = new Panel();
+            txtVariables = new TextBox();
+            label3 = new Label();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -194,11 +196,31 @@
             panel1.Size = new Size(1074, 467);
             panel1.TabIndex = 14;
             // 
+            // txtVariables
+            // 
+            txtVariables.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+            txtVariables.Location = new Point(205, 59);
+            txtVariables.Name = "txtVariables";
+            txtVariables.Size = new Size(497, 32);
+            txtVariables.TabIndex = 15;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+            label3.Location = new Point(12, 59);
+            label3.Name = "label3";
+            label3.Size = new Size(93, 25);
+            label3.TabIndex = 16;
+            label3.Text = "Variables:";
+            // 
             // PolynomForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1098, 705);
+            Controls.Add(label3);
+            Controls.Add(txtVariables);
             Controls.Add(panel1);
             Controls.Add(lblResult);
             Controls.Add(label2);
@@ -232,5 +254,7 @@
         private Label lblResult;
         private Microsoft.Msagl.GraphViewerGdi.GViewer gViewer;
         private Panel panel1;
+        private TextBox txtVariables;
+        private Label label3;
     }
 }

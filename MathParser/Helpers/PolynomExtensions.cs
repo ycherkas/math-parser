@@ -61,7 +61,14 @@ namespace MathParser.Helpers
             {
                 foreach (var child in node.Children)
                 {
-                    if (!child.IsMonomial()) return false;
+                    if(child.Operation == MathOperations.Minus)
+                    {
+                        if (!child.Children[0].IsMonomial()) return false;
+                    }
+                    else
+                    {
+                        if (!child.IsMonomial()) return false;
+                    }
                 }
 
                 return true;
