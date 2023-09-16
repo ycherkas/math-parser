@@ -4,6 +4,7 @@ using Microsoft.Msagl.Drawing;
 using MathParser.Helpers;
 using Microsoft.Msagl.GraphViewerGdi;
 using Microsoft.Msagl.DebugHelpers;
+using Microsoft.Msagl.Core.ProjectionSolver;
 
 namespace MathParser.WinForms
 {
@@ -43,17 +44,18 @@ namespace MathParser.WinForms
 
             bool isPolynom;
             var variablesString = txtVariables.Text;
+            List<NodeBase> variables;
             if (!string.IsNullOrEmpty(variablesString))
             {
-                var variables = variablesString.Split(',').ToList().Select(v => Simplifier.Simplify(v)).ToList();
-                isPolynom = expression.IsPolynom(variables);
-                lblIsPolynom.Text = isPolynom.ToString();
+                variables = variablesString.Split(',').ToList().Select(v => Simplifier.Simplify(v)).ToList();
             }
             else
             {
-                isPolynom = expression.IsPolynom();
-                lblIsPolynom.Text = isPolynom.ToString();
+                variables = expression.GetVariables();
             }
+
+            isPolynom = expression.IsPolynom(variables);
+            lblIsPolynom.Text = isPolynom.ToString();
 
             lblResult.Text = "...";
         }

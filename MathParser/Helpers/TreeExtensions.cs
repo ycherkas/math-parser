@@ -60,6 +60,28 @@ namespace MathParser.Helpers
             return node;
         }
 
+        public static List<NodeBase> GetVariables(this NodeBase node, List<NodeBase> variables = null)
+        {
+            if (variables == null)
+            {
+                variables = new List<NodeBase>();
+            }
+
+            var nodeVariable = node as NodeVariable;
+
+            if (nodeVariable != null && !variables.Any(v => v.StringValue == nodeVariable.StringValue))
+            {
+                variables.Add(nodeVariable);
+            }
+
+            foreach (var child in node.Children)
+            {
+                GetVariables(child, variables);
+            }
+
+            return variables;
+        }
+
         private static void BuildMultichildTree(NodeBase beginNode, NodeBase node, List<NodeBase> newChildren, bool neg)
         {
             foreach (var child in node.Children)
