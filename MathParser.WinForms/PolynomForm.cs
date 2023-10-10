@@ -34,15 +34,34 @@ namespace MathParser.WinForms
             _tree = expression;
 
             lblParsed.Text = expression.ToString();
+            lblResult.Text = "...";
+
+            expression = Simplifier.Simplify(expression);
+
+            var isPolynom = CheckIfPolynom(expression);
+
+            if(!isPolynom)
+            {
+                expression = ExpandHelpers.ExpandAlgebraic(expression);
+                expression = Simplifier.Simplify(expression);
+
+                isPolynom = CheckIfPolynom(expression);
+
+                if (isPolynom)
+                {
+                    lblResult.Text = expression.ToString();
+                    CreateGraph(expression);
+                }
+            }
 
             if (showGraph)
             {
                 CreateGraph(expression);
             }
+        }
 
-            expression = Simplifier.Simplify(expression);
-
-            bool isPolynom;
+        private bool CheckIfPolynom(NodeBase expression)
+        {
             var variablesString = txtVariables.Text;
             List<NodeBase> variables;
             if (!string.IsNullOrEmpty(variablesString))
@@ -54,12 +73,27 @@ namespace MathParser.WinForms
                 variables = expression.GetVariables();
             }
 
-            isPolynom = expression.IsPolynom(variables);
-            lblIsPolynom.Text = isPolynom.ToString();
-
-            lblResult.Text = "...";
+            if (variables.Count == 1 && variables[0] is NodeVariable && expression.IsPolynomSingle((NodeVariable)variables.First()))
+            {
+                lblIsPolynom.Text = $"YES (single variable polynom)";
+                return true;
+            }
+            else if (variables.Count > 1 && variables.All(v => v is NodeVariable) && expression.IsPolynomMulti(variables.Select(v => (NodeVariable)v).ToList()))
+            {
+                lblIsPolynom.Text = $"YES (multi variable polynom)";
+                return true;
+            }
+            else if (expression.IsPolynom(variables))
+            {
+                lblIsPolynom.Text = $"YES (general polynom expression)";
+                return true;
+            }
+            else
+            {
+                lblIsPolynom.Text = "NO";
+                return false;
+            }
         }
-
 
         private void btnSimplify_Click(object sender, EventArgs e)
         {

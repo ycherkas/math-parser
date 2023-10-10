@@ -19,9 +19,9 @@ namespace MathParser
         {
             if (node is not NodeFunction && node is not NodeFunctionCall) return node;
 
-            foreach (NodeBase child in node.Children)
+            for(var i = 0; i < node.Children.Count; i++)
             {
-                Simplify(child);
+                node.Children[i] = Simplify(node.Children[i]);
             }
 
             switch (node.Operation)

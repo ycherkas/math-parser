@@ -19,7 +19,7 @@ namespace MathParser.Helpers
         {
             if (expression.Equals(variable)) return false;
 
-            if (expression.IsNumber() || expression.IsVariable()) return true;
+            if (expression.IsNumber() || expression is NodeVariable) return true;
 
             foreach (var child in expression.Children)
             {
@@ -99,6 +99,13 @@ namespace MathParser.Helpers
             }
 
             return false;
+        }
+
+        public static bool IsPolynom(this NodeBase node)
+        {
+            var variables = node.GetVariables();
+
+            return IsPolynom(node, variables);
         }
     }
 }
