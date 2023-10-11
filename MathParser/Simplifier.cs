@@ -19,7 +19,7 @@ namespace MathParser
         {
             if (node is not NodeFunction && node is not NodeFunctionCall) return node;
 
-            for(var i = 0; i < node.Children.Count; i++)
+            for (var i = 0; i < node.Children.Count; i++)
             {
                 node.Children[i] = Simplify(node.Children[i]);
             }
@@ -39,6 +39,7 @@ namespace MathParser
                     }
 
                     node = AggregatePowers(node);
+                    node = ReduceMinus(node);
 
                     break;
                 case MathOperations.Power:
@@ -141,17 +142,17 @@ namespace MathParser
                 result *= number.Number;
             }
 
-            if(result == 0)
+            if (result == 0)
             {
                 return new NodeNumber(0);
             }
 
-            if(result == 1)
+            if (result == 1)
             {
                 if (notNumbers.Count == 0)
                     return new NodeNumber(1);
 
-                if(notNumbers.Count == 1)
+                if (notNumbers.Count == 1)
                     return notNumbers.First();
 
                 return new NodeFunction(MathOperations.Multiply, notNumbers);
@@ -168,7 +169,7 @@ namespace MathParser
                 return new NodeFunction(MathOperations.Minus, new NodeFunction(MathOperations.Multiply, notNumbers));
             }
 
-            if(notNumbers.Count == 0)
+            if (notNumbers.Count == 0)
             {
                 return new NodeNumber(result);
             }
@@ -176,6 +177,22 @@ namespace MathParser
             notNumbers.Add(new NodeNumber(result));
 
             return new NodeFunction(MathOperations.Multiply, notNumbers);
+        }
+
+        private static NodeBase ReduceMinus(NodeBase node)
+        {
+            var minusCount = node.Children.Count(c => c.Operation == MathOperations.Minus);
+
+            if (minusCount == 0) return node;
+
+            node.Children = node.Children.Select(c => c.Operation == MathOperations.Minus ? c.Children[0] : c).ToList();
+
+            if (minusCount % 2 == 1)
+            {
+                return new NodeFunction(MathOperations.Minus, node);
+            }
+
+            return node;
         }
 
         private static NodeBase AggregatePowers(NodeBase node)
@@ -251,6 +268,10 @@ namespace MathParser
                 else if (powerFactor.Number == 1)
                 {
                     return node.Children[0];
+                }
+                else if (powerFactor.Number % 2 == 0 && node.Children[0].Operation == MathOperations.Minus)
+                {
+                    return new NodeFunction(MathOperations.Power, node.Children[0].Children[0], powerFactor);
                 }
             }
 
