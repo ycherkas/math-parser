@@ -15,6 +15,8 @@ namespace MathParser.Helpers
 
         public static NodeBase ExpandAlgebraic(NodeBase node)
         {
+            node = node.ToBinaryForm();
+
             if (node.Operation == MathOperations.Add)
             {
                 var newLeft = ExpandAlgebraic(node.Children[0]);
@@ -24,7 +26,9 @@ namespace MathParser.Helpers
 
             if (node.Operation == MathOperations.Multiply)
             {
-                return ExpandProduct(node.Children[0], node.Children[1]);
+                var newLeft = ExpandAlgebraic(node.Children[0]);
+                var newRight = ExpandAlgebraic(node.Children[1]);
+                return ExpandProduct(newLeft, newRight);
             }
 
             if (node.Operation == MathOperations.Power && node.Children[1].IsNumber)
@@ -38,6 +42,11 @@ namespace MathParser.Helpers
                         return ExpandPower(node.Children[0], power);
                     }
                 }
+            }
+
+            if(node.Operation == MathOperations.Minus)
+            {
+                node.Children[0] = ExpandAlgebraic(node.Children[0]);
             }
 
             return node;

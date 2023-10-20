@@ -1,10 +1,6 @@
-using MathParser.Contexts;
+using MathParser.Helpers;
 using MathParser.Nodes;
 using Microsoft.Msagl.Drawing;
-using MathParser.Helpers;
-using Microsoft.Msagl.GraphViewerGdi;
-using Microsoft.Msagl.DebugHelpers;
-using Microsoft.Msagl.Core.ProjectionSolver;
 
 namespace MathParser.WinForms
 {
@@ -24,10 +20,10 @@ namespace MathParser.WinForms
 
         private void btnParse_Click(object sender, EventArgs e)
         {
-            ParseExpression(showGraph: true);
+            ParseExpression();
         }
 
-        private void ParseExpression(bool showGraph = false)
+        private NodeBase ParseExpression()
         {
             var expression = ParserManager.Parse(txtFormula.Text);
 
@@ -36,28 +32,23 @@ namespace MathParser.WinForms
             lblParsed.Text = expression.ToString();
             lblResult.Text = "...";
 
+            expression = ExpandHelpers.ExpandAlgebraic(expression);
             expression = Simplifier.Simplify(expression);
+            //expression = ExpandHelpers.ExpandAlgebraic(expression);
+            //expression = Simplifier.Simplify(expression);
 
             var isPolynom = CheckIfPolynom(expression);
 
-            if(!isPolynom)
+            if (isPolynom)
             {
-                expression = ExpandHelpers.ExpandAlgebraic(expression);
-                expression = Simplifier.Simplify(expression);
-
-                isPolynom = CheckIfPolynom(expression);
-
-                if (isPolynom)
-                {
-                    lblResult.Text = expression.ToString();
-                    CreateGraph(expression);
-                }
-            }
-
-            if (showGraph)
-            {
+                lblResult.Text = expression.ToString();
+                lblResultLabel.Text = "Polynom Form:";
                 CreateGraph(expression);
             }
+
+            CreateGraph(expression);
+
+            return expression;
         }
 
         private bool CheckIfPolynom(NodeBase expression)
@@ -99,10 +90,11 @@ namespace MathParser.WinForms
         {
             try
             {
-                ParseExpression();
+                var simplified = ParseExpression();
 
-                var simplified = Simplifier.Simplify(_tree);
+                lblIsPolynom.Text = "...";
                 lblResult.Text = simplified.ToString();
+                lblResultLabel.Text = "Simplified Result:";
 
                 CreateGraph(simplified);
             }
@@ -113,27 +105,6 @@ namespace MathParser.WinForms
 
         }
 
-        private void radioBinaryForm_CheckedChanged(object sender, EventArgs e)
-        {
-            RadioButton? rb = sender as RadioButton;
-
-            if (rb == null || !rb.Checked || _tree == null) return;
-
-            _tree = _tree.ToBinaryForm();
-
-            CreateGraph(_tree);
-        }
-
-        private void radioNaryForm_CheckedChanged(object sender, EventArgs e)
-        {
-            RadioButton? rb = sender as RadioButton;
-
-            if (rb == null || !rb.Checked || _tree == null) return;
-
-            _tree = _tree.ToMultichildTreeFull();
-
-            CreateGraph(_tree);
-        }
 
         #region Graph Visualization
 

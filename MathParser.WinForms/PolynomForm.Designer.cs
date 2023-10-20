@@ -36,13 +36,13 @@
             lblFormula = new Label();
             label1 = new Label();
             lblIsPolynom = new Label();
-            btnSimplify = new Button();
-            label2 = new Label();
+            lblResultLabel = new Label();
             lblResult = new Label();
             gViewer = new Microsoft.Msagl.GraphViewerGdi.GViewer();
             panel1 = new Panel();
             txtVariables = new TextBox();
             label3 = new Label();
+            btnSimplify = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -59,9 +59,9 @@
             btnParse.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
             btnParse.Location = new Point(708, 13);
             btnParse.Name = "btnParse";
-            btnParse.Size = new Size(381, 29);
+            btnParse.Size = new Size(381, 31);
             btnParse.TabIndex = 1;
-            btnParse.Text = "Parse";
+            btnParse.Text = "Analyse Polynom";
             btnParse.UseVisualStyleBackColor = true;
             btnParse.Click += btnParse_Click;
             // 
@@ -115,26 +115,15 @@
             lblIsPolynom.TabIndex = 8;
             lblIsPolynom.Text = "...";
             // 
-            // btnSimplify
+            // lblResultLabel
             // 
-            btnSimplify.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
-            btnSimplify.Location = new Point(708, 60);
-            btnSimplify.Name = "btnSimplify";
-            btnSimplify.Size = new Size(381, 29);
-            btnSimplify.TabIndex = 10;
-            btnSimplify.Text = "To Polynom Form";
-            btnSimplify.UseVisualStyleBackColor = true;
-            btnSimplify.Click += btnSimplify_Click;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(12, 183);
-            label2.Name = "label2";
-            label2.Size = new Size(137, 25);
-            label2.TabIndex = 11;
-            label2.Text = "Polynom Form:";
+            lblResultLabel.AutoSize = true;
+            lblResultLabel.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+            lblResultLabel.Location = new Point(12, 183);
+            lblResultLabel.Name = "lblResultLabel";
+            lblResultLabel.Size = new Size(137, 25);
+            lblResultLabel.TabIndex = 11;
+            lblResultLabel.Text = "Polynom Form:";
             // 
             // lblResult
             // 
@@ -214,17 +203,28 @@
             label3.TabIndex = 16;
             label3.Text = "Variables:";
             // 
+            // btnSimplify
+            // 
+            btnSimplify.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+            btnSimplify.Location = new Point(708, 60);
+            btnSimplify.Name = "btnSimplify";
+            btnSimplify.Size = new Size(381, 29);
+            btnSimplify.TabIndex = 17;
+            btnSimplify.Text = "Simplify";
+            btnSimplify.UseVisualStyleBackColor = true;
+            btnSimplify.Click += btnSimplify_Click;
+            // 
             // PolynomForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1098, 705);
+            Controls.Add(btnSimplify);
             Controls.Add(label3);
             Controls.Add(txtVariables);
             Controls.Add(panel1);
             Controls.Add(lblResult);
-            Controls.Add(label2);
-            Controls.Add(btnSimplify);
+            Controls.Add(lblResultLabel);
             Controls.Add(lblIsPolynom);
             Controls.Add(label1);
             Controls.Add(lblFormula);
@@ -249,12 +249,12 @@
         private Label lblFormula;
         private Label label1;
         private Label lblIsPolynom;
-        private Button btnSimplify;
-        private Label label2;
+        private Label lblResultLabel;
         private Label lblResult;
         private Microsoft.Msagl.GraphViewerGdi.GViewer gViewer;
         private Panel panel1;
         private TextBox txtVariables;
         private Label label3;
+        private Button btnSimplify;
     }
 }

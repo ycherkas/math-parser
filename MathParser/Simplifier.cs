@@ -15,13 +15,34 @@ namespace MathParser
             return Simplify(node);
         }
 
-        public static NodeBase Simplify(NodeBase node)
+        public static NodeBase Simplify(NodeBase input)
+        {
+            var result = SimplifyRecursion(input);
+
+            result.Sort();
+
+            return result;
+        }
+
+        private static NodeBase SimplifyRecursion(NodeBase input)
+        {
+            var result = input;
+            do
+            {
+                input = result;
+                result = SimplifyExpression(input);
+            } while (!result.Equals(input));
+
+            return result;
+        }
+
+        private static NodeBase SimplifyExpression(NodeBase node)
         {
             if (node is not NodeFunction && node is not NodeFunctionCall) return node;
 
             for (var i = 0; i < node.Children.Count; i++)
-            {
-                node.Children[i] = Simplify(node.Children[i]);
+           {
+                node.Children[i] = SimplifyRecursion(node.Children[i]);
             }
 
             switch (node.Operation)
@@ -80,6 +101,12 @@ namespace MathParser
 
         private static NodeBase ReduceAddition(NodeBase node1, NodeBase node2)
         {
+            if (node1.IsNumber && ((NodeNumber)node1).Number == 0)
+                return node2;
+
+            if (node2.IsNumber && ((NodeNumber)node2).Number == 0)
+                return node1;
+
             var node1neg = node1.Operation == MathOperations.Minus;
             var node2neg = node2.Operation == MathOperations.Minus;
             var node11 = node1neg ? node1.Children[0] : node1;
@@ -125,7 +152,7 @@ namespace MathParser
                 var resultNodes = new List<NodeBase>();
                 resultNodes.Add(new NodeNumber(value1 + value2));
                 resultNodes.AddRange(notValueNodes1);
-                return Simplify(new NodeFunction(MathOperations.Multiply, resultNodes));
+                return SimplifyRecursion(new NodeFunction(MathOperations.Multiply, resultNodes));
             }
             else
                 return null;
@@ -222,10 +249,10 @@ namespace MathParser
 
                 if (nodesWithSameBasis.Count > 1)
                 {
-                    var newPowerFactor = Simplify(new NodeFunction(MathOperations.Add,
+                    var newPowerFactor = SimplifyRecursion(new NodeFunction(MathOperations.Add,
                             nodesWithSameBasis.Select(node => GetPowerFactor(node)).ToList()));
 
-                    newChildren.Add(Simplify(new NodeFunction(MathOperations.Power,
+                    newChildren.Add(SimplifyRecursion(new NodeFunction(MathOperations.Power,
                         basis,
                         newPowerFactor
                     )));
@@ -239,7 +266,7 @@ namespace MathParser
                 if (newChildren.Count == 1)
                     return newChildren[0];
                 else
-                    return Simplify(new NodeFunction(MathOperations.Multiply, newChildren));
+                    return SimplifyRecursion(new NodeFunction(MathOperations.Multiply, newChildren));
             }
             else
                 return node;
@@ -259,6 +286,23 @@ namespace MathParser
 
         private static NodeBase SimplifyPower(NodeBase node)
         {
+            if (node.Children[0] is NodeFunction childFuncNode)
+            {
+                if (childFuncNode.Operation == MathOperations.Power)
+                {
+                    node.Children[1] = Simplify(
+                        new NodeFunction(MathOperations.Multiply, node.Children[0].Children[1], node.Children[1]));
+                    node.Children[0] = node.Children[0].Children[0];
+                    //return ExpValue(funcNode);
+                    return node;
+                }
+                //else if (childFuncNode.FunctionType == KnownFuncType.Mult)
+                //{
+                //    var expResult = ExpValue(funcNode);
+                //    var multNode = PowerIntoMult(funcNode.Children[0].Children, funcNode.Children[1]);
+                //    return (multNode.NodeCount <= expResult.NodeCount) ? multNode : expResult;
+                //}
+            }
             if (node.Children[1] is NodeNumber powerFactor)
             {
                 if (powerFactor.Number == 0)

@@ -58,6 +58,11 @@ namespace MathParser.Helpers
 
         public static bool IsMonomial(this NodeBase expression, List<NodeBase> variables)
         {
+            if(expression.Operation == MathOperations.Minus)
+            {
+                return expression.Children[0].IsMonomial(variables);
+            }
+
             if (expression.FreeOf(variables)) return true;
 
             if (expression.IsVariable(variables)) return true;
@@ -85,14 +90,7 @@ namespace MathParser.Helpers
             {
                 foreach (var child in expression.Children)
                 {
-                    if (child.Operation == MathOperations.Minus)
-                    {
-                        if (!child.Children[0].IsMonomial(variables)) return false;
-                    }
-                    else
-                    {
-                        if (!child.IsMonomial(variables)) return false;
-                    }
+                    if (!child.IsMonomial(variables)) return false;
                 }
 
                 return true;

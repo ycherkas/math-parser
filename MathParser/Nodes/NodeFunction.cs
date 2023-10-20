@@ -75,10 +75,11 @@ namespace MathParser.Nodes
 
             for (var i = 0; i < Children.Count; i++)
             {
-                if(i == Children.Count - 1)
+                if (i == Children.Count - 1)
                 {
                     result += ToStringWithParentheses(Children[i]);
-                } else
+                }
+                else
                 {
                     result += ToStringWithParentheses(Children[i]) + Operation.Value();
                 }
