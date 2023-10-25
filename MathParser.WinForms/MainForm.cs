@@ -142,7 +142,7 @@ namespace MathParser.WinForms
         {
             if (!node.Children.Any()) return;
 
-            for(var i = node.Children.Count - 1; i >= 0; i--)
+            for (var i = node.Children.Count - 1; i >= 0; i--)
             {
                 var child = node.Children[i];
                 var childNode = graph.AddNode(Guid.NewGuid().ToString());

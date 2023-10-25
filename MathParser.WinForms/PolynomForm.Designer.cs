@@ -61,7 +61,7 @@
             btnParse.Name = "btnParse";
             btnParse.Size = new Size(381, 31);
             btnParse.TabIndex = 1;
-            btnParse.Text = "Analyse Polynom";
+            btnParse.Text = "Analyse";
             btnParse.UseVisualStyleBackColor = true;
             btnParse.Click += btnParse_Click;
             // 

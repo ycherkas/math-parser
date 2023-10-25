@@ -34,8 +34,6 @@ namespace MathParser.WinForms
 
             expression = ExpandHelpers.ExpandAlgebraic(expression);
             expression = Simplifier.Simplify(expression);
-            //expression = ExpandHelpers.ExpandAlgebraic(expression);
-            //expression = Simplifier.Simplify(expression);
 
             var isPolynom = CheckIfPolynom(expression);
 

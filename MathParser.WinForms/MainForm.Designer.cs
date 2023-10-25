@@ -64,7 +64,7 @@
             btnParse.Name = "btnParse";
             btnParse.Size = new Size(381, 29);
             btnParse.TabIndex = 1;
-            btnParse.Text = "Parse";
+            btnParse.Text = "Analyse";
             btnParse.UseVisualStyleBackColor = true;
             btnParse.Click += btnParse_Click;
             // 

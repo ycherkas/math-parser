@@ -41,7 +41,7 @@ namespace MathParser
             if (node is not NodeFunction && node is not NodeFunctionCall) return node;
 
             for (var i = 0; i < node.Children.Count; i++)
-           {
+            {
                 node.Children[i] = SimplifyRecursion(node.Children[i]);
             }
 
@@ -309,13 +309,25 @@ namespace MathParser
                 {
                     return new NodeNumber(1);
                 }
-                else if (powerFactor.Number == 1)
+                if (powerFactor.Number == 1)
                 {
                     return node.Children[0];
                 }
-                else if (powerFactor.Number % 2 == 0 && node.Children[0].Operation == MathOperations.Minus)
+                if (powerFactor.Number % 2 == 0 && node.Children[0].Operation == MathOperations.Minus)
                 {
                     return new NodeFunction(MathOperations.Power, node.Children[0].Children[0], powerFactor);
+                }
+            }
+
+            if (node.Children[0] is NodeNumber powerBase)
+            {
+                if (powerBase.Number == 0)
+                {
+                    return new NodeNumber(0);
+                }
+                if (powerBase.Number == 1)
+                {
+                    return new NodeNumber(1);
                 }
             }
 
